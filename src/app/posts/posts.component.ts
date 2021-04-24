@@ -1,4 +1,8 @@
+import { Observable } from 'rxjs';
+import { Article } from './../interfaces/article';
+import { PostService } from './../post.service';
 import { Component, OnInit } from '@angular/core';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-posts',
@@ -7,9 +11,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PostsComponent implements OnInit {
 
-  constructor() { }
+  articles: Article[];
+  articles$: Observable<Article[]>;
+
+  constructor(private postService: PostService) { }
 
   ngOnInit(): void {
+    this.articles$ = this.postService.getArticles()
+      .pipe(
+        map(result => result.articles)
+      );
+    // this.postService.getArticles().subscribe(result => {
+    //   this.articles = result.articles;
+    // });
   }
 
 }
