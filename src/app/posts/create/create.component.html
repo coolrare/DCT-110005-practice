@@ -2,31 +2,48 @@
   <div class="container page">
     <div class="row">
       <div class="col-md-10 col-md-offset-1 col-xs-12">
-        <form>
+        {{ form.get('tags').value | json }}
+        <form [formGroup]="form">
           <fieldset class="form-group">
-            <input
-              class="form-control form-control-lg"
+            <input formControlName="title" class="form-control form-control-lg" type="text" placeholder="Post Title" />
+          </fieldset>
+          <fieldset class="form-group">
+            <textarea formControlName="description" class="form-control" rows="3" placeholder="Description"></textarea>
+          </fieldset>
+          <fieldset class="form-group">
+            <textarea formControlName="body" class="form-control" rows="8" placeholder="Post body"></textarea>
+          </fieldset>
+          <fieldset class="form-group">
+            <input #tagInput class="form-control" type="text" placeholder="Enter tags"
+              (keyup.enter)="addTag(tagInput.value); tagInput.value = ''" />
+
+            <!-- 使用 formArrayName 把標籤區塊範圍變成 tags 的 formArray -->
+            <!-- 再使用 index 與 formControlName 綁在一起 -->
+            <!-- <ng-container formArrayName="tags">
+              <input
+                *ngFor="let tag of form.get('tags').value; let index=index"
+                [formControlName]="index"
+                class="form-control"
+                type="text"
+                placeholder="Enter tags" />
+            </ng-container> -->
+
+            <!-- 取得 controls 陣列並綁在 input 上-->
+            <!-- <input
+              *ngFor="let control of getTagsControl()"
+              [formControl]="control"
+              class="form-control"
               type="text"
-              placeholder="Post Title"
-            />
-          </fieldset>
-          <fieldset class="form-group">
-            <textarea
-              class="form-control"
-              rows="3"
-              placeholder="Description"
-            ></textarea>
-          </fieldset>
-          <fieldset class="form-group">
-            <textarea
-              class="form-control"
-              rows="8"
-              placeholder="Post body"
-            ></textarea>
-          </fieldset>
-          <fieldset class="form-group">
-            <input class="form-control" type="text" placeholder="Enter tags" />
+              placeholder="Enter tags" /> -->
+
             <div class="tag-list">
+              <span class="label label-pill label-default"
+               *ngFor="let tag of form.get('tags').value; let index=index">
+                <i (click)="removeTag(index)" class="ion-close-round"></i>
+                 {{ tag }}
+              </span>
+            </div>
+            <!-- <div class="tag-list">
               <span class="label label-pill label-default">
                 <i class="ion-close-round"></i> programming</span
               >
@@ -36,9 +53,9 @@
               <span class="label label-pill label-default">
                 <i class="ion-close-round"></i> webdev</span
               >
-            </div>
+            </div> -->
           </fieldset>
-          <button type="submit" class="btn btn-lg btn-primary pull-xs-right">
+          <button (click)="send()" type="submit" class="btn btn-lg btn-primary pull-xs-right">
             Create Post
           </button>
         </form>
