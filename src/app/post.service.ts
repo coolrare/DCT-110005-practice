@@ -22,5 +22,14 @@ export class PostService {
 
   createArticle(article: CreateArticle): Observable<SingleArticle> {
     return this.httpClient.post<SingleArticle>(`${environment.apiUrl}/api/articles`, { article });
+    // 示範直接在 HttpClient 設定 header 的方法
+    // return this.httpClient.post<SingleArticle>(
+    //   `${environment.apiUrl}/api/articles`,
+    //    { article },
+    //    {
+    //      headers: {
+    //        Authorization: `Bearer ${localStorage}`,
+    //      }
+    //    });
   }
 }

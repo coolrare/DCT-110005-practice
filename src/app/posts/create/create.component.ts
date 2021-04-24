@@ -1,10 +1,18 @@
+import { Router } from '@angular/router';
+import { PostService } from './../../post.service';
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
-  styleUrls: ['./create.component.css'],
+  styleUrls: ['./create.component.css']
 })
 export class CreateComponent implements OnInit {
   // form = new FormGroup({
@@ -21,7 +29,10 @@ export class CreateComponent implements OnInit {
   form = this.formBuilder.group({
     title: this.formBuilder.control('', Validators.required),
     description: this.formBuilder.control(''),
-    body: this.formBuilder.control('', [Validators.required, Validators.minLength(10)]),
+    body: this.formBuilder.control('', [
+      Validators.required,
+      Validators.minLength(10),
+    ]),
     tags: this.formBuilder.array([
       this.formBuilder.control('HTML'),
       this.formBuilder.control('JavaScript'),
@@ -33,7 +44,11 @@ export class CreateComponent implements OnInit {
     return (this.form.get('tags') as FormArray).controls;
   }
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private router: Router,
+    private formBuilder: FormBuilder,
+    private postService: PostService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -47,5 +62,11 @@ export class CreateComponent implements OnInit {
 
   send() {
     console.log(this.form.value);
+    const data = { ...this.form.value, tagList: this.form.value.tags };
+    delete data.tags;
+
+    this.postService.createArticle(data).subscribe(() => {
+      this.router.navigateByUrl('/');
+    });
   }
 }
