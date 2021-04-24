@@ -1,9 +1,9 @@
 import { PostService } from './../../post.service';
-import { Observable } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Article } from 'src/app/interfaces/article';
-import { map, shareReplay, switchMap } from 'rxjs/operators';
+import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-post',
@@ -21,7 +21,16 @@ export class PostComponent implements OnInit {
     this.article$ = this.route.paramMap.pipe(
       map(paramMap => paramMap.get('id')),
       switchMap(id => this.postService.getArticle(id)),
-      map(singleArticle => singleArticle.article),
+      map(singleArticle => {
+        if(singleArticle.article){
+          return singleArticle.article;
+        }
+        throw Error('not found');
+      }),
+      catchError(error => {
+        alert(error);
+        return of({} as Article);
+      }),
       // shareReplay(1)
     );
 
